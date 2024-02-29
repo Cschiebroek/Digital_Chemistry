@@ -10,6 +10,7 @@ import torch
 
 
 allowable_set= ["C","N","O","F","P","S","Cl","Br","I","H"]
+default_properties = ['LogVP', 'LogP', 'LogOH', 'LogBCF', 'LogHalfLife', 'BP', 'Clint', 'FU', 'LogHL', 'LogKmHL', 'LogKOA', 'LogKOC', 'MP', 'LogMolar']
 
 
 def read_sdf(file_path,prop_name,conditions = None):
@@ -27,7 +28,7 @@ def read_sdf(file_path,prop_name,conditions = None):
         print(f'Error reading {file_path}')
         return None
     
-def load_data(overwrite=False):
+def load_data(overwrite=False,prop_list = default_properties):
 
     if not overwrite:
         try:
@@ -56,7 +57,7 @@ def load_data(overwrite=False):
     }
 
     # Read SDF files and extract data
-    data_dict = {prop: read_sdf(path, prop) for prop, path in file_paths.items()}
+    data_dict = {prop: read_sdf(path, prop) for prop, path in prop_list}
 
     # Create Pandas dataframes
     df_dict = {prop: pd.DataFrame(data) for prop, data in data_dict.items()}
@@ -70,36 +71,36 @@ def load_data(overwrite=False):
     return df_combined
 
 
-def scale_props(df):
+def scale_props(df,prop_list = default_properties):
     scaler = MinMaxScaler()
     df_scaled = df.copy()
-    df_scaled[['LogVP', 'LogP', 'LogOH', 'LogBCF', 'LogHalfLife', 'BP', 'Clint', 'FU', 'LogHL', 'LogKmHL', 'LogKOA', 'LogKOC', 'MP', 'LogMolar']] = scaler.fit_transform(df_scaled[['LogVP', 'LogP', 'LogOH', 'LogBCF', 'LogHalfLife', 'BP', 'Clint', 'FU', 'LogHL', 'LogKmHL', 'LogKOA', 'LogKOC', 'MP', 'LogMolar']])
+    df_scaled[prop_list] = scaler.fit_transform(df_scaled[prop_list])
     return df_scaled,scaler
 
 def load_graphs(dash_charges=False,scaled =True):
     if dash_charges:
         if scaled:
-            mol_graphs = torch.load('mol_graphs_dash_charges_scaled.pt')
+            mol_graphs = torch.load('mol_graphs_dash_charges_scaled_train.pt')
         else:
-            mol_graphs = torch.load('mol_graphs_dash_charges_unscaled.pt')
+            mol_graphs = torch.load('mol_graphs_dash_charges_unscaled_train.pt')
     else:
         if scaled:
-            mol_graphs = torch.load('mol_graphs_unscaled.pt')
+            mol_graphs = torch.load('mol_graphs_unscaled_train.pt')
         else:
-            mol_graphs = torch.load('mol_graphs_scaled.pt')
+            mol_graphs = torch.load('mol_graphs_scaled_train.pt')
     return mol_graphs
 
 def save_graphs_func(mol_graphs,dash_charges=False,scaled =True):
     if dash_charges:
         if scaled:
-            torch.save(mol_graphs, 'mol_graphs_dash_charges_scaled.pt')
+            torch.save(mol_graphs, 'mol_graphs_dash_charges_scaled_train.pt')
         else:
-            torch.save(mol_graphs, 'mol_graphs_dash_charges_unscaled.pt')
+            torch.save(mol_graphs, 'mol_graphs_dash_charges_unscaled_train.pt')
     else:
         if scaled:
-            torch.save(mol_graphs, 'mol_graphs_unscaled.pt')
+            torch.save(mol_graphs, 'mol_graphs_unscaled_train.pt')
         else:
-            torch.save(mol_graphs, 'mol_graphs_scaled.pt')
+            torch.save(mol_graphs, 'mol_graphs_scaled_train.pt')
 
 def get_graphs(df,dash_charges=False,scaled =True,save_graphs = False):
 
@@ -135,9 +136,11 @@ def get_graphs(df,dash_charges=False,scaled =True,save_graphs = False):
         indices_to_drop_charges = [all_mols.index(m) for m in error_mols_charges]
         indices_to_drop_total = list(set(indices_to_drop_size + indices_to_drop_charges))
         print(len(indices_to_drop_total), len(indices_to_drop_size), len(indices_to_drop_charges))
+        #get the smiles of indices_to_drop_total
+        smiles_to_drop = [df['SMILES'].iloc[i] for i in indices_to_drop_total]
         if indices_to_drop_total:
-            print('Caution! Mols dropped')
-            df = df.drop(indices_to_drop_total)
+            #drop these smiles from the dataframe
+            df = df[~df['SMILES'].isin(smiles_to_drop)]
     
     else:
         from serenityff.charge.gnn.utils import get_graph_from_mol

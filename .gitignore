@@ -1,4 +1,6 @@
 *.pt
 OPERA_Data/*
 __pycache__/*
-
+*.csv
+*.png
+*.jpg

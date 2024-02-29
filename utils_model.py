@@ -27,7 +27,11 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 torch.use_deterministic_algorithms(True)
 
-def train_multi(train_loader, model, optimizer, device, outputs):
+default_properties = ['LogVP', 'LogP', 'LogOH', 'LogBCF', 'LogHalfLife', 'BP', 'Clint', 'FU', 'LogHL', 'LogKmHL', 'LogKOA', 'LogKOC', 'MP', 'LogMolar']
+
+
+def train_multi(train_loader, model, optimizer, device, outputs,props_to_train):
+    idx_to_train = [default_properties.index(prop) for prop in props_to_train]
     total_loss = total_examples = 0
     for data in train_loader:
         data = data.to(device)
@@ -35,6 +39,8 @@ def train_multi(train_loader, model, optimizer, device, outputs):
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         weighted_loss = num_labels = 0
         for i in range(outputs):
+            if i not in idx_to_train:
+                continue
             y_tmp = data.y[:, i]
             out_tmp = out[:, i]
             # Find indices where labels are available
@@ -64,13 +70,16 @@ def train_multi(train_loader, model, optimizer, device, outputs):
     return sqrt(total_loss / total_examples)
 
 
-def validate_multi(val_loader, model, outputs):
+def validate_multi(val_loader, model, outputs,props_to_train):
+    idx_to_train = [default_properties.index(prop) for prop in props_to_train]
     total_loss = total_examples = 0
     for data in val_loader:
         data = data.to(device)
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         weighted_loss = num_labels = 0
         for i in range(outputs):
+            if i not in idx_to_train:
+                continue
 
             y_tmp = data.y[:, i]
             out_tmp = out[:, i]
@@ -96,7 +105,7 @@ def validate_multi(val_loader, model, outputs):
 
     return sqrt(total_loss / total_examples)
 
-def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epochs, outputs, verbose=True):
+def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epochs, outputs, verbose=True,props_to_train = default_properties):
     train_losses = []
     val_losses = []
     scheduler = ReduceLROnPlateau(optimizer, patience=2, factor=0.9,verbose=False)
@@ -104,11 +113,11 @@ def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epo
     min_val_los = 10000000
     for epoch in range(num_epochs):
         model.train()
-        train_loss = train_multi(train_loader, model, optimizer, device, outputs)
+        train_loss = train_multi(train_loader, model, optimizer, device, outputs,props_to_train)
         train_losses.append(train_loss)
 
         model.eval()
-        val_loss = validate_multi(val_loader, model, outputs)
+        val_loss = validate_multi(val_loader, model, outputs,props_to_train)
         val_losses.append(val_loss)
         scheduler.step(val_loss)
 
@@ -129,15 +138,12 @@ def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epo
 
 from scipy.stats import spearmanr,kendalltau
 
-def get_preds_per_task(val_loader,outputs):
-    model= AttentiveFP(in_channels=24, hidden_channels=200, out_channels=outputs,
-                            edge_dim=11, num_layers=4, num_timesteps=2,
-                            dropout=0.0).to(device)
-    model.load_state_dict(torch.load('test_model.pt'))
+def get_preds_per_task(model,val_loader,outputs,props_to_predict):
+    idx_to_pred = [default_properties.index(prop) for prop in props_to_predict]
     model.to(device)
     model.eval()
-    preds = tuple([[] for i in range(outputs)])
-    ys = tuple([[] for i in range(outputs)])
+    preds = tuple([[] for i in range(len(props_to_predict))])
+    ys = tuple([[] for i in range(len(props_to_predict))])
     counter = 0
 
     for data in val_loader:
@@ -145,6 +151,9 @@ def get_preds_per_task(val_loader,outputs):
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         
         for i in range(outputs):
+            if i not in idx_to_pred:
+                continue
+
             y_tmp = data.y[:, i]
             out_tmp = out[:, i]
             # Find indices where labels are available
