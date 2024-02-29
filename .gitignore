@@ -1,3 +1,4 @@
 *.pt
 OPERA_Data/*
-__pycache__/custom_featurization_stuff.cpython-311.pyc
+__pycache__/*
+
