@@ -4,6 +4,8 @@ from math import sqrt
 import pandas
 import numpy as np
 import random
+import pickle
+
 
 
 #torch stuff
@@ -105,7 +107,7 @@ def validate_multi(val_loader, model, outputs,props_to_train):
 
     return sqrt(total_loss / total_examples)
 
-def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epochs, outputs, verbose=True,props_to_train = default_properties):
+def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epochs, outputs, verbose=True,props_to_train = default_properties,name='test'):
     train_losses = []
     val_losses = []
     scheduler = ReduceLROnPlateau(optimizer, patience=2, factor=0.9,verbose=False)
@@ -124,7 +126,7 @@ def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epo
         if val_loss < min_val_los:
             min_val_los = val_loss
             counter = 0
-            torch.save(model.state_dict(), 'test_model.pt')
+            torch.save(model.state_dict(), f'{name}.pt')
 
         else:
             counter += 1
@@ -145,7 +147,6 @@ def get_preds_per_task(model,val_loader,outputs,props_to_predict):
     preds = tuple([[] for i in range(len(props_to_predict))])
     ys = tuple([[] for i in range(len(props_to_predict))])
     counter = 0
-
     for data in val_loader:
         data = data.to(device)
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
@@ -169,23 +170,24 @@ def get_preds_per_task(model,val_loader,outputs,props_to_predict):
                 # Replace -1 values with predictions and true values where available
                 preds_tmp[present_label_indices] = out_tmp[present_label_indices]
                 ys_tmp[present_label_indices] = y_tmp[present_label_indices]
-
-            preds[i].extend(preds_tmp.detach().cpu().numpy().tolist())
-            ys[i].extend(ys_tmp.detach().cpu().numpy().tolist())
+            tupp_idx = props_to_predict.index(default_properties[i])
+            preds[tupp_idx].extend(preds_tmp.detach().cpu().numpy().tolist())
+            ys[tupp_idx].extend(ys_tmp.detach().cpu().numpy().tolist())
 
     print(counter)
     return preds, ys
 
-
-def preds_and_ys_to_df(preds,ys,ref_df,scaler):
-    df_preds = pd.DataFrame(preds).T
-    cols = ref_df.columns[1:].tolist()
-    df_preds.columns = cols
-    df_preds = df_preds.replace(-1, float('nan'))
-    df_preds[cols] = scaler.inverse_transform(df_preds[cols])
-    df_ys = pd.DataFrame(ys).T
-    df_ys.columns = cols
-    df_ys = df_ys.replace(-1, float('nan'))
-    df_ys[cols] = scaler.inverse_transform(df_ys[cols])
-    return df_preds,df_ys
-
+def vals_to_df(vals,props_to_predict,scaled=True):
+    scaler = pickle.load(open('scaler.pkl', 'rb'))
+    df = pd.DataFrame(vals).T
+    df.columns = props_to_predict
+    if scaled:
+        df = df.replace(-1, float('nan'))
+        for prop in default_properties:
+            if prop not in df.columns:
+                df[prop] = float('nan')
+        df = df[default_properties]
+        df[default_properties] = scaler.inverse_transform(df[default_properties])
+        #drop properties with only nans
+        df = df.dropna(axis=1, how='all')
+    return df
