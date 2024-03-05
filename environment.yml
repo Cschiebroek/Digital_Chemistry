@@ -16,7 +16,7 @@ dependencies:
   - seaborn
 
     # ML
-  - pytorch>=2.1.0
+  - pytorch>=2.2.1
   - pytorch-cuda=12.1
   - pyg>=2.2.0
   - ray-default
