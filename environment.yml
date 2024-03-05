@@ -1,0 +1,37 @@
+name: mtl
+
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+  - pyg
+
+dependencies:
+    # Base
+  - python>=3.11
+  - numexpr>=2.8.4
+  - tqdm
+  - rdkit
+  - matplotlib
+  - seaborn
+
+    # ML
+  - pytorch>=2.2.1
+  - pytorch-cuda=12.1
+  - pyg>=2.2.0
+  - ray-default
+  - ray-tune
+  - ray-train
+  - scikit-learn
+
+    # Jupyter
+  - notebook
+  - ipykernel
+  - ipywidgets
+
+    # DASH-tree
+  - m2r
+  - openff-toolkit=0.10.0
+
+variables:
+  CUBLAS_WORKSPACE_CONFIG: :16:8
