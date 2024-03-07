@@ -32,7 +32,21 @@ torch.use_deterministic_algorithms(True)
 default_properties = ['LogVP', 'LogP', 'LogOH', 'LogBCF', 'LogHalfLife', 'BP', 'Clint', 'FU', 'LogHL', 'LogKmHL', 'LogKOA', 'LogKOC', 'MP', 'LogMolar']
 
 
-def train_multi(train_loader, model, optimizer, device, outputs,props_to_train):
+def train_multi(train_loader, model, optimizer, device, outputs, props_to_train):
+    """
+    Trains a multi-output model using the given train_loader, model, optimizer, device, outputs, and props_to_train.
+
+    Args:
+        train_loader (torch.utils.data.DataLoader): The data loader for training data.
+        model (torch.nn.Module): The model to be trained.
+        optimizer (torch.optim.Optimizer): The optimizer used for training.
+        device (torch.device): The device on which the training will be performed.
+        outputs (int): The number of output units in the model.
+        props_to_train (list): A list of property indices to train.
+
+    Returns:
+        float: The square root of the average loss per example.
+    """
     idx_to_train = [default_properties.index(prop) for prop in props_to_train]
     total_loss = total_examples = 0
     for data in train_loader:
@@ -107,27 +121,44 @@ def validate_multi(val_loader, model, outputs,props_to_train):
 
     return sqrt(total_loss / total_examples)
 
-def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epochs, outputs, verbose=True,props_to_train = default_properties,name='test'):
+def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epochs, outputs, verbose=True, props_to_train=default_properties, name='test'):
+    """
+    Trains and validates a multi-output model.
+
+    Args:
+        model (nn.Module): The model to train and validate.
+        train_loader (DataLoader): The data loader for the training set.
+        val_loader (DataLoader): The data loader for the validation set.
+        optimizer (Optimizer): The optimizer for updating the model's parameters.
+        num_epochs (int): The number of epochs to train for.
+        outputs (int): The number of output units in the model.
+        verbose (bool, optional): Whether to print training progress. Defaults to True.
+        props_to_train (list, optional): List of properties to train. Defaults to default_properties.
+        name (str, optional): Name of the model. Defaults to 'test'.
+
+    Returns:
+        list: List of training losses.
+        list: List of validation losses.
+    """
     train_losses = []
     val_losses = []
-    scheduler = ReduceLROnPlateau(optimizer, patience=2, factor=0.9,verbose=False)
+    scheduler = ReduceLROnPlateau(optimizer, patience=2, factor=0.9, verbose=False)
 
-    min_val_los = 10000000
+    min_val_loss = 10000000
     for epoch in range(num_epochs):
         model.train()
-        train_loss = train_multi(train_loader, model, optimizer, device, outputs,props_to_train)
+        train_loss = train_multi(train_loader, model, optimizer, device, outputs, props_to_train)
         train_losses.append(train_loss)
 
         model.eval()
-        val_loss = validate_multi(val_loader, model, outputs,props_to_train)
+        val_loss = validate_multi(val_loader, model, outputs, props_to_train)
         val_losses.append(val_loss)
         scheduler.step(val_loss)
 
-        if val_loss < min_val_los:
-            min_val_los = val_loss
+        if val_loss < min_val_loss:
+            min_val_loss = val_loss
             counter = 0
             torch.save(model.state_dict(), f'{name}.pt')
-
         else:
             counter += 1
         if counter > 10:
@@ -136,6 +167,8 @@ def train_and_validate_multi(model, train_loader, val_loader, optimizer, num_epo
             break
         if verbose:
             print(f"Epoch {epoch + 1}/{num_epochs}: Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+
+    return train_losses, val_losses
 
 
 from scipy.stats import spearmanr,kendalltau
