@@ -18,24 +18,19 @@ The current environment should hopefully do the job.
 
 If you want to use dash trees, their path should be added in "utils_data.py"
 
-TO DO 
+TO DO
 -------------
-- Review and complete the Project Proposal Template: https://docs.google.com/document/d/1ZiWIgKuQqnhzkXxxvat5gBYuOEk7WYMYkq5uh8jDx0o/edit?usp=sharing (deadline 19 March)
-
-THINGS TO INVESTIGATE
--------------
-- Model architectures (AttentiveFP vs ChemProp) (low priority)
-- Make doc pretty (add refs) (Carl) (high priority)
-- HP optimization (Together?, Carl)
-- Analyze attentions (Enrico)
-- Chemical space analysis (Carl, Riccardo) --> generalize to new molecules? 
-- Compare MTL vs STL vs MTL with same mols from STL (Enrico + Riccardo)
 
 May 6th 2024
-- Which properties? And how to combine?
-- Chemical space analysis
-- Make doc pretty 
-- HP optimization
-- Compare MTL vs STL
+- Which properties? And how to combine? (Together?)
+- Chemical space analysis (Carl, Riccardo) --> generalize to new molecules? 
+- HP optimization (Together?, Carl)
+- Compare MTL vs STL (Enrico + Riccardo)
 
+May 30th 2024 (poster session)
+- Make poster
 
+Unspecified date
+- Model architectures (AttentiveFP vs ChemProp) (low priority)
+- Analyze attentions (Enrico)
+- Report results for different train/test splits
