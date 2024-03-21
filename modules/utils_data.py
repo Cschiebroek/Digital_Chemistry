@@ -57,7 +57,7 @@ def load_data(overwrite=False,prop_list = default_properties):
     }
 
     # Read SDF files and extract data
-    data_dict = {prop: read_sdf(path, prop) for prop, path in prop_list}
+    data_dict = {prop: read_sdf(path, prop) for prop, path in file_paths.items()}
 
     # Create Pandas dataframes
     df_dict = {prop: pd.DataFrame(data) for prop, data in data_dict.items()}
@@ -69,7 +69,6 @@ def load_data(overwrite=False,prop_list = default_properties):
     df_combined = reduce(lambda left, right: pd.merge(left, right, on='SMILES', how='outer'), [df[['SMILES', prop]] for prop, df in df_dict.items()])
     df_combined = df_combined[['SMILES'] + list(df_dict.keys())]
     return df_combined
-
 
 def scale_props(df,prop_list = default_properties):
     scaler = MinMaxScaler()
@@ -117,9 +116,9 @@ def get_graphs(df,dash_charges=False,scaled =True,save_graphs = False):
     indices_to_drop_size = [all_mols.index(m) for m in error_mol]
      
     if dash_charges:
-        from custom_featurization_stuff import get_graph_from_mol
+        from utils.custom_featurization_stuff import get_graph_from_mol
         from serenityff.charge.tree.dash_tree import DASHTree
-        tree = DASHTree(tree_folder_path='/localhome/cschiebroek/other/serenityff-charge/tree')
+        tree = DASHTree(tree_folder_path='/localhome/eruijsena/serenityff-charge/fancy_new_tree')
         tmp_mols = mols 
         mols = []
         error_mols_charges = []

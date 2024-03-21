@@ -21,16 +21,28 @@ If you want to use dash trees, their path should be added in "utils_data.py"
 TO DO
 -------------
 
-May 6th 2024
-- Which properties? And how to combine? (Together?)
-- Chemical space analysis (Carl, Riccardo) --> generalize to new molecules? 
+April 1st 2024
+- Code reorganization
+   - Data (Riccardo)
+   - Model (Carl, Domen)
+   - Results (Enrico)
 - HP optimization (Together?, Carl)
+
+April 8th 2024
+- Which properties? And how to combine? (Together?)
+
+May 6th 2024
+- Freezing layers
 - Compare MTL vs STL (Enrico + Riccardo)
 
 May 30th 2024 (poster session)
 - Make poster
 
-Unspecified date
-- Model architectures (AttentiveFP vs ChemProp) (low priority)
-- Analyze attentions (Enrico)
+End of June
+- Try out a different model architecture (Chemprop)
 - Report results for different train/test splits
+- Make report
+
+Unspecified date
+- Analyze attentions (Enrico)
+- Chemical space analysis (Riccardo) --> generalize to new molecules?
