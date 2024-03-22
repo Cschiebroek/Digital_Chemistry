@@ -163,7 +163,7 @@ class BaseModelTrainer:
             Returns:
                 None
             """
-            torch.save(self.model.state_dict(), self.path + f'models/{self.name}.pt')
+            torch.save(self.model, self.path + f'models/{self.name}.pt')
 
     def load_model(self):
             """
@@ -232,6 +232,8 @@ class BaseModelTrainer:
                 if self.verbose:
                     print('early stopping')
                 break
+            torch.save(self.model, f'{self.path}models/{self.name}_final.pt')
+
         return train_losses, val_losses
         
         
