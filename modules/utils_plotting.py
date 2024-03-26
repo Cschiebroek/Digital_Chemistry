@@ -3,6 +3,7 @@ import seaborn as sns
 
 from scipy.stats import kendalltau, pearsonr
 import numpy as np
+import pandas as pd
 from sklearn.metrics import r2_score
 
 
@@ -18,14 +19,14 @@ def plot_property_histograms(df):
 
 def plot_scatters(df_preds,df_ys):
     for prop in df_preds.columns:
+        if prop == 'smiles':
+            continue
     #make tmp df, where all nan are dropped for that property
-        df_preds_tmp = df_preds[[prop]].dropna()
-        df_ys_tmp = df_ys[[prop]].dropna()
-        preds = df_preds_tmp[prop].values
-        ys = df_ys_tmp[prop].values
-        kendall_tau,rmse_overall,mae_overall,within_03_overall,within_1_overall = get_stats(preds,ys)
-        r2 = r2_score(ys,preds)
-        pearson = pearsonr(ys,preds)[0]
+        tmp_df = pd.DataFrame([df_preds[prop].rename("preds"),df_ys[prop].rename("ys")]).T
+        tmp_df = tmp_df.dropna()
+        kendall_tau,rmse_overall,mae_overall,within_03_overall,within_1_overall = get_stats(tmp_df["preds"],tmp_df["ys"])
+        r2 = r2_score(tmp_df["ys"],tmp_df["preds"])
+        pearson = pearsonr(tmp_df["ys"],tmp_df["preds"])[0]
         print(f'Property: {prop}')
         print(f'kendall_tau: {kendall_tau}')
         print(f'rmse_overall: {rmse_overall}')
@@ -35,9 +36,9 @@ def plot_scatters(df_preds,df_ys):
         print(f'R2: {r2}')
         print(f'Pearson: {pearson}')
         plt.figure(figsize=(10, 10))
-        plt.scatter(ys, preds, alpha=0.5)
-        min_val = min(min(ys),min(preds))
-        max_val = max(max(ys),max(preds))
+        plt.scatter(tmp_df["ys"], tmp_df["preds"], alpha=0.5)
+        min_val = min(min(tmp_df["ys"]),min(tmp_df["preds"]))
+        max_val = max(max(tmp_df["ys"]),max(tmp_df["preds"]))
         #add diagonal, and lines at +- 0.3 and +- 1
         plt.plot([min_val-1,max_val+1],[min_val-1,max_val+1],color='black')
         plt.plot([min_val-1,max_val+1],[min_val-1+0.3,max_val+1+0.3],color='black',linestyle='--')

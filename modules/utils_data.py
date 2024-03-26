@@ -1161,7 +1161,7 @@ def save_graphs_func(mol_graphs, dash_charges=False, scaled=True):
             torch.save(mol_graphs, 'mol_graphs_scaled_train.pt')
 
 
-def get_graphs(df,dash_charges=False,scaled =True,save_graphs = False):
+def get_graphs(df,dash_charges=False,scaled =True,save_graphs = False, force_create = False):
     """
     Get molecular graphs from the given DataFrame.
     
@@ -1170,16 +1170,19 @@ def get_graphs(df,dash_charges=False,scaled =True,save_graphs = False):
     dash_charges (bool, optional): Whether to use dash charges. Defaults to False.
     scaled (bool, optional): Whether to scale the graphs. Defaults to True.
     save_graphs (bool, optional): Whether to save the graphs to a file. Defaults to False.
+    force_create (bool, optional): Whether to force the creation of new graphs (instead of loading from a file). Defaults to False.
     
     Returns:
     mol_graphs: The molecular graphs.
     """
-    try:
-        mol_graphs = load_graphs(dash_charges,scaled)
-        print('Loading previously created graphs')
-        return mol_graphs
-    except FileNotFoundError:
-        print('Creating new graphs')
+    if not force_create:
+        try:
+            mol_graphs = load_graphs(dash_charges,scaled)
+            print('Loading previously created graphs')
+            return mol_graphs
+        except FileNotFoundError:
+            pass
+    print('Creating new graphs')
 
     all_mols = [Chem.MolFromSmiles(smi) for smi in df['SMILES']]
     mols = [m for m in all_mols if m.GetNumAtoms() > 1]
