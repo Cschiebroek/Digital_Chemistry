@@ -1114,54 +1114,8 @@ def compare_distributions(df_scaled, train, test, figsize=(20,5.5)):
         ax.set_title(col)
     plt.tight_layout()
     plt.show()
-    
-    
-def load_graphs(dash_charges=False, scaled=True):
-    """
-    Load molecular graphs from saved files.
 
-    Parameters:
-    - dash_charges (bool): Whether to load graphs with dash charges. Default is False.
-    - scaled (bool): Whether to load scaled graphs. Default is True.
-
-    Returns:
-    - mol_graphs: Loaded molecular graphs.
-    """
-    if dash_charges:
-        if scaled:
-            mol_graphs = torch.load('mol_graphs_dash_charges_scaled_train.pt')
-        else:
-            mol_graphs = torch.load('mol_graphs_dash_charges_unscaled_train.pt')
-    else:
-        if scaled:
-            mol_graphs = torch.load('mol_graphs_unscaled_train.pt')
-        else:
-            mol_graphs = torch.load('mol_graphs_scaled_train.pt')
-    return mol_graphs
-
-
-def save_graphs_func(mol_graphs, dash_charges=False, scaled=True):
-    """
-    Save the molecular graphs to a file.
-
-    Parameters:
-        mol_graphs (torch.Tensor): The molecular graphs to be saved.
-        dash_charges (bool, optional): Whether to include dash charges in the file name. Defaults to False.
-        scaled (bool, optional): Whether the graphs are scaled. Defaults to True.
-    """
-    if dash_charges:
-        if scaled:
-            torch.save(mol_graphs, 'mol_graphs_dash_charges_scaled_train.pt')
-        else:
-            torch.save(mol_graphs, 'mol_graphs_dash_charges_unscaled_train.pt')
-    else:
-        if scaled:
-            torch.save(mol_graphs, 'mol_graphs_unscaled_train.pt')
-        else:
-            torch.save(mol_graphs, 'mol_graphs_scaled_train.pt')
-
-
-def get_graphs(df,dash_charges=False,scaled =True,save_graphs = False):
+def get_graphs(df,dash_charges=False,scaled =True,test=False, save_graphs = False):
     """
     Get molecular graphs from the given DataFrame.
     
@@ -1169,13 +1123,26 @@ def get_graphs(df,dash_charges=False,scaled =True,save_graphs = False):
     df (DataFrame): A pandas DataFrame containing the SMILES representation and the specified properties of the molecules.
     dash_charges (bool, optional): Whether to use dash charges. Defaults to False.
     scaled (bool, optional): Whether to scale the graphs. Defaults to True.
+    test (bool, optional): Whether to get the train or test graphs. Defaults to False (train graphs)
     save_graphs (bool, optional): Whether to save the graphs to a file. Defaults to False.
     
     Returns:
     mol_graphs: The molecular graphs.
     """
+    graphprops = []
+    if dash_charges:
+        graphprops.append('dash_charges')
+    if scaled:
+        graphprops.append('scaled')
+    else:
+        graphprops.append('unscaled')
+    if test:
+        graphprops.append('test')
+    else:
+        graphprops.append('train')
+
     try:
-        mol_graphs = load_graphs(dash_charges,scaled)
+        mol_graphs = torch.load(f'mol_graphs_{"_".join(graphprops)}.pt')
         print('Loading previously created graphs')
         return mol_graphs
     except FileNotFoundError:
@@ -1228,5 +1195,5 @@ def get_graphs(df,dash_charges=False,scaled =True,save_graphs = False):
         mol_graphs[i].SMILES = SMILES[i]
         mol_graphs[i].y = y[i]
     if save_graphs:
-        save_graphs_func(mol_graphs,dash_charges,scaled)
+        torch.save(mol_graphs, f'mol_graphs_{"_".join(graphprops)}.pt')
     return mol_graphs
