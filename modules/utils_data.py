@@ -16,8 +16,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import mannwhitneyu
 from typing import Any, Iterable, List, Tuple, Union, Optional
-from joblib import dump, load
-
+import pickle
 # Constants
 DEFAULT_HYBRIDIZATION_SET = ["SP", "SP2", "SP3"]
 DEFAULT_TOTAL_DEGREE_SET = [0, 1, 2, 3, 4, 5]
@@ -1014,11 +1013,17 @@ def scale_props(df,prop_list = default_properties):
 
     The function creates a copy of the input DataFrame, scales the specified properties using MinMaxScaler, and replaces the original properties with the scaled properties in the copied DataFrame.
     """
-    scaler = MinMaxScaler()
     df_scaled = df.copy()
-    df_scaled[prop_list] = scaler.fit_transform(df_scaled[prop_list])
-    dump(scaler, 'scaler.pkl')
-    return df_scaled,scaler
+    if os.path.exists('scaler.pkl'):
+        print('Loading previously created scaler')
+        scaler = load('scaler.pkl')
+        df_scaled[prop_list] = scaler.transform(df_scaled[prop_list])
+    else:
+        scaler = MinMaxScaler()
+        print('Creating new scaler')
+        df_scaled[prop_list] = scaler.fit_transform(df_scaled[prop_list])
+        pickle.dump(scaler, open('scaler.pkl', 'wb'))
+    return df_scaled
 
 def compare_distributions(df_scaled, train, test, figsize=(20,5.5)):
     """
@@ -1073,6 +1078,7 @@ def get_graphs(df,dash_charges=False,scaled =True,test=False, save_graphs = Fals
         graphprops.append('dash_charges')
     if scaled:
         graphprops.append('scaled')
+        df = scale_props(df)
     else:
         graphprops.append('unscaled')
     if test:

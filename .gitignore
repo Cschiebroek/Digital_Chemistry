@@ -9,3 +9,8 @@ __pycache__/*
 *.pyc
 props2
 serenityff*
+*.ckpt
+*.toml
+*hparams.yaml
+
+
