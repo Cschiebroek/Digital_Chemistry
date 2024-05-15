@@ -19,16 +19,16 @@ You can download the data used for the models described here from the GitHub OPE
 TO DO
 -------------
 
-- Cleaning up repo for chemprop workflow --> Carl
+- [x] Cleaning up repo for chemprop workflow --> Carl 
 
-- Hyperparameter optimization --> Carl
+- [ ] Hyperparameter optimization --> Carl
 
-- Comparison with Opera models (use same splits for STL) --> Enrico
-- Varying the number of tasks in the multitask learning --> Enrico main (Riccardo Carl supporting)
+- [ ] Comparison with Opera models (use same splits for STL) --> Enrico
+- [ ] Varying the number of tasks in the multitask learning --> Enrico main (Riccardo Carl supporting)
 
-- SAMPL challenge benchmark prediction comparison (check if no overlap OPERA-SAMPL) --> Riccardo
+- [ ] SAMPL challenge benchmark prediction comparison (check if no overlap OPERA-SAMPL) --> Riccardo
 
-- Scaffold split OPERA data --> Domen (Carl supporting)
+- [ ] Scaffold split OPERA data --> Domen (Carl supporting)
    - https://jcheminf.biomedcentral.com/articles/10.1186/s13321-023-00787-9
 
 Poster:
