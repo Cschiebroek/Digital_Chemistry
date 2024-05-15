@@ -14,6 +14,7 @@ conda env create -f environment.yml
 conda activate chemprop
   ```
 
+You can download the data used for the models described here from the GitHub OPERA github page https://github.com/kmansouri/OPERA/
 
 TO DO
 -------------
