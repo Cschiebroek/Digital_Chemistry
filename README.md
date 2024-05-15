@@ -45,4 +45,4 @@ Meeting:
 - 23.05.24 1pm - 2pm First sharing of results
 - 28.05.24 1pm - 5pm Making the poster
 
-Deadline: May 30th 2024 3:30pm (poster session)
+Deadline: May 30th 2024 1:45pm (poster session)
