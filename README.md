@@ -21,28 +21,28 @@ If you want to use dash trees, their path should be added in "utils_data.py"
 TO DO
 -------------
 
-April 1st 2024
-- Code reorganization
-   - Data (Riccardo)
-   - Model (Carl, Domen)
-   - Results (Enrico)
-- HP optimization (Together?, Carl)
+- Cleaning up repo for chemprop workflow --> Carl
 
-April 8th 2024
-- Which properties? And how to combine? (Together?)
+- Hyperparameter optimization --> Carl
 
-May 6th 2024
-- Freezing layers
-- Compare MTL vs STL (Enrico + Riccardo)
+- Comparison with Opera models (use same splits for STL) --> Enrico
+- Varying the number of tasks in the multitask learning --> Enrico main (Riccardo Carl supporting)
 
-May 30th 2024 (poster session)
-- Make poster
+- SAMPL challenge benchmark prediction comparison (check if no overlap OPERA-SAMPL) --> Riccardo
 
-End of June
-- Try out a different model architecture (Chemprop)
-- Report results for different train/test splits
-- Make report
+- Scaffold split OPERA data --> Domen (Carl supporting)
+   - https://jcheminf.biomedcentral.com/articles/10.1186/s13321-023-00787-9
 
-Unspecified date
-- Analyze attentions (Enrico)
-- Chemical space analysis (Riccardo) --> generalize to new molecules?
+Poster:
+https://www.overleaf.com/3869273436fsspfnqhngvr#806db5
+
+- Abstract (inlcuding motivation)
+- Methods
+- Results
+- Conclusions
+
+Meeting:
+- 23.05.24 1pm - 2pm First sharing of results
+- 28.05.24 1pm - 5pm Making the poster
+
+Deadline: May 30th 2024 3:30pm (poster session)
