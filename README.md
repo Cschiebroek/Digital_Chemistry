@@ -3,20 +3,17 @@ Installation
 
    ```bash
     mamba env create -f environment.yml
-    conda activate mtl
+    conda activate chemprop
    ```
 
-This project also currently requires Marc Lehner's dash charges. Currently (05.03.2024), the public Github version is not working properly so you need to ask him for access to his private one.
+Alternatively install from sourece
+  ```bash
+git clone https://github.com/chemprop/chemprop.git
+cd chemprop
+conda env create -f environment.yml
+conda activate chemprop
+  ```
 
-Once you cloned the dash-tree repo, just go there and do
-
-   ```bash
-    python setup.py install
-   ```
-
-The current environment should hopefully do the job.
-
-If you want to use dash trees, their path should be added in "utils_data.py"
 
 TO DO
 -------------
