@@ -12,5 +12,6 @@ serenityff*
 *.ckpt
 *.toml
 *hparams.yaml
+chemprop_hpopt/*
 
 
