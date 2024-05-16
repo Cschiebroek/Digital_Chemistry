@@ -21,7 +21,7 @@ TO DO
 
 - [x] Cleaning up repo for chemprop workflow --> Carl 
 
-- [ ] Hyperparameter optimization --> Carl
+- [x] Hyperparameter optimization --> Carl
 
 - [ ] Comparison with Opera models (use same splits for STL) --> Enrico
 - [ ] Varying the number of tasks in the multitask learning --> Enrico main (Riccardo Carl supporting)
