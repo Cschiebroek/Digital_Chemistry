@@ -82,7 +82,7 @@ chemprop hpopt \
   --task-type regression \
   --num-workers 15 \
 # Read the JSON file
-json_file="${BASE_DIR}/chemprop_hpopt/train.json" \
+json_file="${BASE_DIR}/chemprop_hpopt/train/best_params.json" \
 
 # Extract values using jq
 dropout=$(jq '.train_loop_config.dropout' "$json_file")
@@ -103,7 +103,7 @@ echo "Training model for $PROP_NAME"
 chemprop train \
   --data-path "${BASE_DIR}/data/train.csv" \
   --task-type regression \
-  --output-dir "${BASE_DIR}/chemprop_out/mtl_all \
+  --output-dir "${BASE_DIR}/chemprop_out/mtl_all" \
   --num-workers 15 \
   --dropout $dropout \
   --ffn-num-layers $ffn_num_layers \
