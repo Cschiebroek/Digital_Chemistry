@@ -30,7 +30,7 @@ TO DO
 
 - [ ] Scaffold split OPERA data --> Domen (Carl supporting)
    - https://jcheminf.biomedcentral.com/articles/10.1186/s13321-023-00787-9
-
+- [ ] For final tasks: run ensamble models (3) + different random splits (5)
 Poster:
 https://www.overleaf.com/3869273436fsspfnqhngvr#806db5
 
