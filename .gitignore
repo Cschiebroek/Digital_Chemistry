@@ -13,5 +13,6 @@ serenityff*
 *.toml
 *hparams.yaml
 chemprop_hpopt/*
+chemprop_out/*
 
 
