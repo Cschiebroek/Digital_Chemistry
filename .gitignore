@@ -1,5 +1,6 @@
 *.pt
 OPERA_Data/*
+OPERA_splits/*
 __pycache__/*
 *.csv
 *.png
