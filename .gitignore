@@ -1,6 +1,9 @@
 *.pt
 OPERA_Data/*
 OPERA_splits/*
+MTL_which_properties/*
+LogP_different_sizes/*
+LogP_low_data/*
 __pycache__/*
 *.csv
 *.png
