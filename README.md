@@ -32,9 +32,9 @@ TO DO
 
 - [x] Try to do PCA/clustering to select very few datapoints to decide what models will give best performance --> Riccardo at first then Enrico
 
-- [] Assess effect of variance when taking small subset --> Carl
+- [ ] Assess effect of variance when taking small subset --> Carl
 
-- [] Assess effect of training set size --> Domen
+- [ ] Assess effect of training set size --> Domen
 
 Poster:
 https://www.overleaf.com/3869273436fsspfnqhngvr#806db5
