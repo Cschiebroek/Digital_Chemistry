@@ -28,9 +28,9 @@ TO DO
 
 - [x] SAMPL challenge benchmark prediction comparison (check if no overlap OPERA-SAMPL) --> Riccardo
 
-- [] Make notebook to make the main plot to use as a template for all the following tasks --> Enrico + Riccardo
+- [x] Make notebook to make the main plot to use as a template for all the following tasks --> Enrico + Riccardo
 
-- [] Try to do PCA/clustering to select very few datapoints to decide what models will give best performance --> Riccardo at first then Enrico
+- [x] Try to do PCA/clustering to select very few datapoints to decide what models will give best performance --> Riccardo at first then Enrico
 
 - [] Assess effect of variance when taking small subset --> Carl
 
