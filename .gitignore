@@ -20,4 +20,4 @@ chemprop_hpopt/*
 chemprop_out/*
 chemprop_out*/*
 
-
+*events.out.tfevents*
