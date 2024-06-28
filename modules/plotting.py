@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import pearsonr, kendalltau
+from scipy.stats import pearsonr, kendalltau,t
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 DEFAULT_PROP_NAMES = ['LogBCF', 'LogP', 'LogVP', 'MP', 'LogKOC', 'BP', 'LogHL', 'Clint', 'FU',
@@ -69,3 +69,34 @@ def plot_scatter_and_line(ax, true_values, pred_values, title):
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=10, verticalalignment='top', bbox=props)
     ax.set_aspect('equal', 'box')
+
+
+def confidence_interval(data, confidence=0.90):
+    n = len(data)
+    mean = np.mean(data)
+    sem = np.std(data, ddof=1) / np.sqrt(n)
+    margin_of_error = sem * t.ppf((1 + confidence) / 2., n-1)
+    return mean, mean - margin_of_error, mean + margin_of_error
+
+def calculate_statistics(true_values, predicted_values):
+    rmse = np.sqrt(mean_squared_error(true_values, predicted_values))
+    mae = mean_absolute_error(true_values, predicted_values)
+    r, _ = pearsonr(true_values, predicted_values)
+    tau, _ = kendalltau(true_values, predicted_values)
+    return rmse, mae, r, tau
+
+def create_scatter_plot(ax, true_values, predicted_values, title,c='skyblue'):
+    xlim = ylim = (1, 5)
+    ax.scatter(true_values, predicted_values, edgecolor='black', color=c)
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
+    ax.plot(xlim, ylim, 'k--')
+
+    rmse, mae, r,tau = calculate_statistics(true_values, predicted_values)
+    textstr = f'RMSE: {rmse:.2f}\nMAE: {mae:.2f}\nPearson r: {r:.2f}\nKendall tau: {tau:.2f}'
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=10, verticalalignment='top', bbox=props)
+
+    ax.set_xlabel('True Values')
+    ax.set_ylabel('Predicted Values')
+    ax.set_title(title)
