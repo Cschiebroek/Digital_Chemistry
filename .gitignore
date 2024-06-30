@@ -5,7 +5,8 @@ MTL_which_properties/*
 LogP_different_sizes/*
 LogP_low_data/*
 __pycache__/*
-*.csv
+data/*
+LogP_PCA_data/*
 *.png
 *.jpg
 *sandbox*
